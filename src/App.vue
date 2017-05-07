@@ -1,23 +1,66 @@
 <template>
-  <div id="app">
-    <img src="./assets/logo.png">
-    <router-view></router-view>
-  </div>
+    <div id="app">
+        <v-header></v-header>
+        <div class="tab">
+            <div class="tab-item">
+                <router-link to="/goods">商品</router-link>
+            </div>
+            <div class="tab-item">
+                <router-link to="/ratings">评论</router-link>
+            </div>
+            <div class="tab-item">
+                <router-link to="/seller">商家</router-link>
+            </div>
+        </div>
+        <div class="content">
+            <router-view></router-view>
+        </div>
+    </div>
 </template>
-
 <script>
+import Header from './components/header/header.vue'
+
+const ERR_OK = 0;
 export default {
-  name: 'app'
+    data() {
+        return {
+            seller: {}
+        };
+    },
+    created() {
+       this.axios.get('/api/seller').then((response) => {
+                if(response.data.erron == ERR_OK){
+                  this.seller = response.data.data;
+                }
+        });
+    },
+    components: {
+        'v-header': Header
+    }
+
 }
 </script>
+<style type="text/css">
+#app .tab {
+    display: flex;
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    border-bottom: 1px solid rgba(7, 17, 17, .1);
+}
 
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+#app .tab .tab-item {
+    flex: 1;
+    text-align: center;
+}
+
+#app .tab .tab-item>a {
+    display: block;
+    font-size: 14px;
+    color: rgb(77, 85, 93);
+}
+
+#app .tab .tab-item>a.active {
+    color: rgb(240, 20, 20);
 }
 </style>
