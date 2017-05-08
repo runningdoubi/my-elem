@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <v-header></v-header>
+        <v-header :seller="seller"></v-header>
         <div class="tab">
             <div class="tab-item">
                 <router-link to="/goods">商品</router-link>
@@ -33,6 +33,10 @@ export default {
                   this.seller = response.data.data;
                 }
         });
+       this.$router.push('/goods');
+    },
+    mounted(){
+      
     },
     components: {
         'v-header': Header
@@ -41,6 +45,11 @@ export default {
 }
 </script>
 <style type="text/css">
+body,html{
+  line-height: 1;
+  font-weight: 200;
+  font-family: 'PingFang SC','STHeitiSC-Light','Helvetica-Light',arial,sans-serif;
+}
 #app .tab {
     display: flex;
     width: 100%;
