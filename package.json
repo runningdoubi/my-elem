@@ -44,6 +44,8 @@
     "url-loader": "^0.5.8",
     "vue-loader": "^11.3.4",
     "vue-style-loader": "^2.0.5",
+    "stylus-loader": "^3.0.1",
+    "stylus": "^0.54.5",
     "vue-template-compiler": "^2.2.6",
     "webpack": "^2.3.3",
     "webpack-dev-middleware": "^1.10.0",
