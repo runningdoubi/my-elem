@@ -14,7 +14,7 @@
     			<ul>
     				<li v-for="food in item.foods" class="food-item">
     					<div class="icon">
-    						<img :src="food.icon" alt="">
+    						<img :src="food.icon" width="57" height="57" alt="">
     					</div>
     					<div class="content">
     						<h2 class="name">{{food.name}}</h2>
@@ -44,7 +44,8 @@ const ERR_OK = 0;
 export default {
     data() {
             return {
-                goods: []
+                goods: [],
+                classMap:[]
             }
         },
         props: {
@@ -83,25 +84,25 @@ export default {
 	    		line-height:14px
 	    		font-size:14px
 	    		padding:0 12px
-	    		border-bottom: 1px solid rgba(7, 17, 17, .1);
+	    		border-bottom: 1px solid rgba(7, 17, 17, .1)
 	    		.icon
-	    			display: inline-block;
-				    vertical-align: top;
-				    width: 12px;
-				    height: 12px;
-				    margin-right: 2px;
-				    background-size: 12px 12px;
-				    background-repeat: no-repeat;
+	    			display: inline-block
+				    vertical-align: top
+				    width: 12px
+				    height: 12px
+				    margin-right: 2px
+				    background-size: 12px 12px
+				    background-repeat: no-repeat
 				    &.decrease
-				    	background-image: url('./img/decrease_3@2x.png');
+				    	background-image: url('./img/decrease_3@2x.png')
 				    &.discount
-				    	background-image: url('./img/discount_3@2x.png');
+				    	background-image: url('./img/discount_3@2x.png')
 				    &.guarantee
-				    	background-image: url('./img/guarantee_3@2x.png');
+				    	background-image: url('./img/guarantee_3@2x.png')
 				    &.invoice
-				    	background-image: url('./img/invoice_3@2x.png');
+				    	background-image: url('./img/invoice_3@2x.png')
 				    &.special
-				    	background-image: url('./img/special_3@2x.png');
+				    	background-image: url('./img/special_3@2x.png')
 				.text
 					display:table-cell
 					width:56px
@@ -109,4 +110,34 @@ export default {
 					font-size:12px
 	    .foods-wrapper
 	    	flex:1
+	    	.title
+	    		padding-left:14px
+	    		height:26px
+	    		line-height:26px
+	    		border:2px solid #d9dd1
+	    		font-size:12px
+	    		color:rgb(147,153,159)
+	    		background-color:#f3f5f7
+	    	.food-item
+	    		display:flex
+	    		margin:18px
+	    		padding-bottom:18px
+	    		border-top:1px solid rgba(255, 255, 255, .2)
+	    		&:last-child
+	    			border-top:none 
+	    			margin-bottom:0
+	    		.icon
+	    			flex:0 0 57px
+	    			width:57px
+	    			height:57px
+	    			margin-right:10px
+	    		.content
+	    			flex:1
+	    			.name
+	    				margin:2px 0 8px 0
+	    				height:14px
+	    				line-height:14px
+	    				font-size:14px
+	    				color:rgb(7,17,27)
+	    				
 </style>
