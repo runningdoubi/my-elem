@@ -35,10 +35,12 @@
                 </li>
             </ul>
         </div>
+        <shopcart></shopcart>
     </div>
 </template>
 <script>
 import BScroll from "better-scroll";
+import shopcart from "../shopcart/shopcart";
 const ERR_OK = 0;
 
 export default {
@@ -54,6 +56,9 @@ export default {
             seller: {
                 type: Object
             }
+        },
+        components:{
+            shopcart
         },
         computed: {
             currentIndex() {
