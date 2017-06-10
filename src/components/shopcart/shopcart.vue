@@ -12,8 +12,8 @@
                 <div class="desc">另需配送费¥{{deliveryPrice}}元</div>
             </div>
             <div class="content-right">
-                <div class="pay">
-                    ¥{{minPrice}}元起送
+                <div class="pay" :class="payClass">
+                    {{payDesc}}
                 </div>
             </div>
         </div>
@@ -25,7 +25,10 @@ export default {
         selectFoods: {
             type: Array,
             default () {
-                return [];
+                return [{
+                    price:10,
+                    count:1
+                }];
             }
         },
         deliveryPrice: {
@@ -51,6 +54,23 @@ export default {
                 count += food.count;
             });
             return count;
+        },
+        payDesc() {
+            if (this.totalPrice === 0) {
+                return `¥${this.minPrice}元起送`;
+            }else if(this.totalPrice < this.minPrice){
+                let diff = this.minPrice - this.totalPrice;
+                return `还差¥${diff}元起送`;
+            }else{
+                return `去结算`;
+            }
+        },
+        payClass(){
+            if(this.totalPrice < this.minPrice){
+                return 'not-enough';
+            }else{
+                return 'enough';
+            }
         }
     }
 }
@@ -96,8 +116,9 @@ export default {
     background-color: #2b343c;
     text-align: center;
 }
-.shopcart .content .content-left .logo-wrapper .logo.highlight{
-	background-color: rgb(0,160,220);
+
+.shopcart .content .content-left .logo-wrapper .logo.highlight {
+    background-color: rgb(0, 160, 220);
 }
 
 .shopcart .content .content-left .logo-wrapper .logo .icon-shopping_cart {
@@ -105,8 +126,9 @@ export default {
     font-size: 24px;
     color: #80858a;
 }
-.shopcart .content .content-left .logo-wrapper .logo .icon-shopping_cart.highlight{
-	color:#fff;
+
+.shopcart .content .content-left .logo-wrapper .logo .icon-shopping_cart.highlight {
+    color: #fff;
 }
 
 .shopcart .content .content-left .logo-wrapper .num {
@@ -137,8 +159,9 @@ export default {
     font-weight: 700;
     color: rgba(255, 255, 255, .4);
 }
-.shopcart .content .content-left .price.highlight{
-	color:#fff;
+
+.shopcart .content .content-left .price.highlight {
+    color: #fff;
 }
 
 .shopcart .content .content-left .desc {
@@ -163,5 +186,12 @@ export default {
     color: rgba(255, 255, 255, .4);
     font-weight: 700;
     background-color: #2b333b;
+}
+.shopcart .content .content-right .pay.not-enough{
+    background-color: #2b333b;
+}
+.shopcart .content .content-right .pay.enough{
+    background-color: #00b43c;
+    color: #fff;
 }
 </style>
