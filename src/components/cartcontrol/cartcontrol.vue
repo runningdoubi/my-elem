@@ -2,7 +2,7 @@
     <div class="cartcontrol">
         <transition name="move">
             <div class="cart-decrease" v-show="food.count>0" @click="decreaseCart($event)">
-                <span class="icon-remove_circle_outline"></span>
+                <span class="icon-remove_circle_outline inner"></span>
             </div>
         </transition>
         <div class="cart-count" v-show="food.count>0">{{food.count}}</div>
@@ -42,17 +42,31 @@ export default {
 };
 </script>
 <style rel="stylesheet" scoped>
+.move-enter-active,
+.move-leave-to {
+    transition: all .4s linear;
+}
+
+.move-enter,
+.move-leave {
+    opacity: 0;
+}
+
+.move-enter,
+.move-leave-to {
+    transform: translateX(100%) rotate(360deg);
+}
+
 .cartcontrol {
     font-size: 0;
 }
 
-.cartcontrol .cart-decrease{
+.cartcontrol .cart-decrease {
     display: inline-block;
     padding: 6px;
 }
 
 .cartcontrol .cart-decrease .inner {
-
     line-height: 24px;
     font-size: 24px;
     color: rgb(0, 160, 220);
@@ -70,6 +84,7 @@ export default {
 }
 
 .cartcontrol .cart-add {
+    display: inline-block;
     padding: 6px;
     line-height: 24px;
     font-size: 24px;
