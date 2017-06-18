@@ -30,7 +30,7 @@ export default {
                 this.food.count++;
             };
         },
-        decreaseCart() {
+        decreaseCart(event) {
             if (!event._constructed) {
                 return;
             };
