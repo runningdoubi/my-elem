@@ -54,7 +54,7 @@ export default {
 
 .move-enter,
 .move-leave-to {
-    transform: translateX(100%) rotate(360deg);
+    transform: translateX(100%) rotate(180deg);
 }
 
 .cartcontrol {

@@ -4,7 +4,7 @@
             <ul>
                 <li v-for="(item,index) in goods" class="menu-item" :class="{'current':currentIndex===index}" @click="selectMenu(index,$event)">
                     <span class="text">
-                	<span v-show="item.type>0" class="icon" :class="classMap[item.type]"></span> {{item.name}}
+                    <span v-show="item.type>0" class="icon" :class="classMap[item.type]"></span> {{item.name}}
                     </span>
                 </li>
             </ul>
@@ -38,7 +38,7 @@
                 </li>
             </ul>
         </div>
-        <shopcart :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
+        <shopcart :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
     </div>
 </template>
 <script>
@@ -62,7 +62,7 @@ export default {
                 type: Object
             }
         },
-        components:{
+        components: {
             shopcart,
             cartcontrol
         },
@@ -76,6 +76,17 @@ export default {
                     }
                 }
                 return 0;
+            },
+            selectFoods() {
+                let foods = [];
+                this.goods.forEach((good) => {
+                    good.foods.forEach((food) => {
+                        if (food.count) {
+                            foods.push(food)
+                        }
+                    })
+                });
+                return foods;
             }
         },
         created() {
@@ -93,11 +104,11 @@ export default {
         methods: {
             _initScroll() {
                 this.menuScroll = new BScroll(this.$refs.menuWrapper, {
-                	click:true
+                    click: true
                 });
 
                 this.foodsScroll = new BScroll(this.$refs.foodsWrapper, {
-                    click:true,
+                    click: true,
                     probeType: 3
                 });
                 this.foodsScroll.on("scroll", (pos) => {
@@ -114,13 +125,13 @@ export default {
                     this.listHeight.push(height);
                 }
             },
-            selectMenu(index,event){
-            	if(!event._constructed){
-            		return;
-            	}
-            	let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook');
-            	let el = foodList[index];
-            	this.foodsScroll.scrollToElement(el,300);
+            selectMenu(index, event) {
+                if (!event._constructed) {
+                    return;
+                }
+                let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook');
+                let el = foodList[index];
+                this.foodsScroll.scrollToElement(el, 300);
             }
         }
 }
@@ -151,13 +162,14 @@ export default {
     padding: 0 12px;
     border-bottom: 1px solid rgba(7, 17, 17, .1);
 }
-.goods .menu-wrapper .menu-item.current{
-	position: relative;
-	z-index: 10;
-	margin-top: -1px;
-	background-color: #fff;
-	font-weight: 700;
-	border-bottom:none;
+
+.goods .menu-wrapper .menu-item.current {
+    position: relative;
+    z-index: 10;
+    margin-top: -1px;
+    background-color: #fff;
+    font-weight: 700;
+    border-bottom: none;
 }
 
 .goods .menu-wrapper .menu-item .icon {
@@ -277,9 +289,10 @@ export default {
     font-size: 10px;
     color: rgb(147, 153, 159);
 }
-.goods .foods-wrapper .food-item .content .cartcontrol-wrapper{
+
+.goods .foods-wrapper .food-item .content .cartcontrol-wrapper {
     position: absolute;
     right: 0;
-    bottom:12px;
+    bottom: 12px;
 }
 </style>
