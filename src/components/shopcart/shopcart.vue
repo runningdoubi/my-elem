@@ -1,6 +1,6 @@
 <template>
     <div class="shopcart">
-        <div class="content">
+        <div class="content" @click="toggleList">
             <div class="content-left">
                 <div class="logo-wrapper">
                     <div class="logo" :class="{'highlight':totalCount>0}">
@@ -17,56 +17,103 @@
                 </div>
             </div>
         </div>
+        <transition name="fold">
+            <div class="shopcart-list" v-show="listShow">
+                <div class="list-header">
+                    <h1 class="title">购物车</h1>
+                    <span class="empty">清空</span>
+                </div>
+                <div class="list-content">
+                    <ul>
+                        <li class="food" v-for="food in selectFoods">
+                            <span class="name">{{food.name}}</span>
+                            <div class="price">
+                                <span>¥{{food.price*food.count}}</span>
+                            </div>
+                            <div class="cartcontrol-wrapper">
+                                <cartcontrol :food="food"></cartcontrol>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </transition>
     </div>
 </template>
 <script type="text/javascript">
+import cartcontrol from "../cartcontrol/cartcontrol";
+
 export default {
-    props: {
-        selectFoods: {
-            type: Array
-        },
-        deliveryPrice: {
-            type: Number,
-            default: 0
-        },
-        minPrice: {
-            type: Number,
-            default: 0
-        }
-    },
-    computed: {
-        totalPrice() {
-            let total = 0;
-            this.selectFoods.forEach((food) => {
-                total += food.price * food.count
-            });
-            return total;
-        },
-        totalCount() {
-            let count = 0;
-            this.selectFoods.forEach((food) => {
-                count += food.count;
-            });
-            return count;
-        },
-        payDesc() {
-            if (this.totalPrice === 0) {
-                return `¥${this.minPrice}元起送`;
-            }else if(this.totalPrice < this.minPrice){
-                let diff = this.minPrice - this.totalPrice;
-                return `还差¥${diff}元起送`;
-            }else{
-                return `去结算`;
+    data() {
+            return {
+                fold: true
             }
         },
-        payClass(){
-            if(this.totalPrice < this.minPrice){
-                return 'not-enough';
-            }else{
-                return 'enough';
+        props: {
+            selectFoods: {
+                type: Array
+            },
+            deliveryPrice: {
+                type: Number,
+                default: 0
+            },
+            minPrice: {
+                type: Number,
+                default: 0
+            }
+        },
+        components: {
+            cartcontrol
+        },
+        computed: {
+            totalPrice() {
+                let total = 0;
+                this.selectFoods.forEach((food) => {
+                    total += food.price * food.count
+                });
+                return total;
+            },
+            totalCount() {
+                let count = 0;
+                this.selectFoods.forEach((food) => {
+                    count += food.count;
+                });
+                return count;
+            },
+            payDesc() {
+                if (this.totalPrice === 0) {
+                    return `¥${this.minPrice}元起送`;
+                } else if (this.totalPrice < this.minPrice) {
+                    let diff = this.minPrice - this.totalPrice;
+                    return `还差¥${diff}元起送`;
+                } else {
+                    return `去结算`;
+                }
+            },
+            payClass() {
+                if (this.totalPrice < this.minPrice) {
+                    return 'not-enough';
+                } else {
+                    return 'enough';
+                }
+            },
+            listShow() {
+                if (!this.totalCount) {
+                    this.fold = true;
+                    return false;
+                }
+                let show = !this.fold;
+                return show;
+            }
+        },
+        methods: {
+            toggleList() {
+                if (!this.totalCount) {
+                    return;
+                }
+                this.fold = !this.fold;
             }
         }
-    }
 }
 </script>
 <style rel="stylesheet" scoped>
@@ -181,11 +228,52 @@ export default {
     font-weight: 700;
     background-color: #2b333b;
 }
-.shopcart .content .content-right .pay.not-enough{
+
+.shopcart .content .content-right .pay.not-enough {
     background-color: #2b333b;
 }
-.shopcart .content .content-right .pay.enough{
+
+.shopcart .content .content-right .pay.enough {
     background-color: #00b43c;
     color: #fff;
+}
+
+.shopcart .shopcart-list {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    width: 100%;
+}
+.fold-enter-active,.fold-leave-to{
+    transition: all .1s;
+    transform: translate3d(0,-100%,0);
+}
+.fold-enter,.fold-leave{
+    transform: translate3d(0,0,0);
+}
+.shopcart-list .list-header{
+    height: 40px;
+    line-height: 40px;
+    padding: 0 18px;
+    background-color: #f3f5f7;
+    border-bottom: 1px solid rgba(7,17,27,.1);
+}
+.shopcart-list .list-header .title{
+    float: left;
+    font-size: 14px;
+    color: rgb(7,17,27);
+}
+.shopcart-list .list-header .empty{
+    float: right;
+    font-size: 12px;
+    color: rgb(0,160,220);
+}
+.shopcart-list .list-content{
+    padding: 0 18px;
+    max-height: 217px;
+    overflow: hidden;
+    background-color: #fff;
+
 }
 </style>
