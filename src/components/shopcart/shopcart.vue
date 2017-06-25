@@ -1,46 +1,52 @@
 <template>
-    <div class="shopcart">
-        <div class="content" @click="toggleList">
-            <div class="content-left">
-                <div class="logo-wrapper">
-                    <div class="logo" :class="{'highlight':totalCount>0}">
-                        <i class="icon-shopping_cart" :class="{'highlight':totalCount>0}"></i>
+    <div>
+        <div class="shopcart">
+            <div class="content" @click="toggleList">
+                <div class="content-left">
+                    <div class="logo-wrapper">
+                        <div class="logo" :class="{'highlight':totalCount>0}">
+                            <i class="icon-shopping_cart" :class="{'highlight':totalCount>0}"></i>
+                        </div>
+                        <div class="num" v-show="totalCount>0">{{totalCount}}</div>
                     </div>
-                    <div class="num" v-show="totalCount>0">{{totalCount}}</div>
+                    <div class="price" :class="{'highlight':totalPrice>0}">¥{{totalPrice}}</div>
+                    <div class="desc">另需配送费¥{{deliveryPrice}}元</div>
                 </div>
-                <div class="price" :class="{'highlight':totalPrice>0}">¥{{totalPrice}}</div>
-                <div class="desc">另需配送费¥{{deliveryPrice}}元</div>
-            </div>
-            <div class="content-right">
-                <div class="pay" :class="payClass">
-                    {{payDesc}}
+                <div class="content-right" @click.stop.prevent="pay">
+                    <div class="pay" :class="payClass">
+                        {{payDesc}}
+                    </div>
                 </div>
             </div>
+            <transition name="fold">
+                <div class="shopcart-list" v-show="listShow">
+                    <div class="list-header">
+                        <h1 class="title">购物车</h1>
+                        <span class="empty" @click="empty">清空</span>
+                    </div>
+                    <div class="list-content" ref="listContent">
+                        <ul>
+                            <li class="food" v-for="food in selectFoods">
+                                <span class="name">{{food.name}}</span>
+                                <div class="price">
+                                    <span>¥{{food.price*food.count}}</span>
+                                </div>
+                                <div class="cartcontrol-wrapper">
+                                    <cartcontrol :food="food"></cartcontrol>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </transition>
         </div>
-        <transition name="fold">
-            <div class="shopcart-list" v-show="listShow">
-                <div class="list-header">
-                    <h1 class="title">购物车</h1>
-                    <span class="empty">清空</span>
-                </div>
-                <div class="list-content">
-                    <ul>
-                        <li class="food" v-for="food in selectFoods">
-                            <span class="name">{{food.name}}</span>
-                            <div class="price">
-                                <span>¥{{food.price*food.count}}</span>
-                            </div>
-                            <div class="cartcontrol-wrapper">
-                                <cartcontrol :food="food"></cartcontrol>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+        <transition name="fade">
+            <div class="list-mark" @click="hideList" v-show="listShow"></div>
         </transition>
     </div>
 </template>
 <script type="text/javascript">
+import BScroll from "better-scroll";
 import cartcontrol from "../cartcontrol/cartcontrol";
 
 export default {
@@ -103,6 +109,17 @@ export default {
                     return false;
                 }
                 let show = !this.fold;
+                if (show) {
+                    this.$nextTick(() => {
+                        if (!this.scroll) {
+                            this.scroll = new BScroll(this.$refs.listContent, {
+                                click: true
+                            });
+                        } else {
+                            this.scroll.refresh();
+                        }
+                    })
+                }
                 return show;
             }
         },
@@ -112,6 +129,21 @@ export default {
                     return;
                 }
                 this.fold = !this.fold;
+            },
+            empty() {
+                this.selectFoods.forEach((food) => {
+                    food.count = 0;
+                })
+            },
+            hideList(){
+                this.fold = true;
+            },
+            pay(){
+                if (this.totalPrice < this.minPrice) {
+                    return;
+                }else{
+                    window.alert(`支付${this.totalPrice}元`)
+                }
             }
         }
 }
@@ -244,36 +276,91 @@ export default {
     left: 0;
     z-index: -1;
     width: 100%;
+    transform: translate3d(0, -100%, 0);
 }
-.fold-enter-active,.fold-leave-to{
-    transition: all .1s;
-    transform: translate3d(0,-100%,0);
+
+.shopcart-list.fold-enter-active,
+.shopcart-list.fold-leave-active {
+    transition: all .5s;
 }
-.fold-enter,.fold-leave{
-    transform: translate3d(0,0,0);
+
+.shopcart-list.fold-enter,
+.shopcart-list.fold-leave-active {
+    transform: translate3d(0, 0, 0);
 }
-.shopcart-list .list-header{
+
+.shopcart-list .list-header {
     height: 40px;
     line-height: 40px;
     padding: 0 18px;
     background-color: #f3f5f7;
-    border-bottom: 1px solid rgba(7,17,27,.1);
+    border-bottom: 1px solid rgba(7, 17, 27, .1);
 }
-.shopcart-list .list-header .title{
+
+.shopcart-list .list-header .title {
     float: left;
     font-size: 14px;
-    color: rgb(7,17,27);
+    color: rgb(7, 17, 27);
 }
-.shopcart-list .list-header .empty{
+
+.shopcart-list .list-header .empty {
     float: right;
     font-size: 12px;
-    color: rgb(0,160,220);
+    color: rgb(0, 160, 220);
 }
-.shopcart-list .list-content{
+
+.shopcart-list .list-content {
     padding: 0 18px;
     max-height: 217px;
     overflow: hidden;
     background-color: #fff;
+}
 
+.shopcart-list .list-content .food {
+    position: relative;
+    padding: 12px 0;
+    box-sizing: border-box;
+    border-bottom: 1px solid rgba(7, 17, 27, .1);
+}
+
+.shopcart-list .list-content .food .name {
+    line-height: 24px;
+    font-size: 14px;
+    color: rgb(7, 17, 27);
+}
+
+.shopcart-list .list-content .food .price {
+    position: absolute;
+    right: 90px;
+    bottom: 12px;
+    line-height: 24px;
+    font-size: 14px;
+    font-weight: 700;
+    color: rgb(240, 20, 20);
+}
+
+.shopcart-list .list-content .food .cartcontrol-wrapper {
+    position: absolute;
+    right: 0;
+    bottom: 6px;
+}
+.list-mark{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 40;
+    opacity: 1;
+    background-color: rgba(7,17,27,.6);
+    /* backdrop-filter:blur(10px); 效果不好*/ 
+}
+.list-mark.fade-enter-active,
+.list-mark.fade-leave-active{
+    transition: all .5s;
+}
+.list-mark.fade-enter,
+.list-mark.fade-leave-active{
+    opacity: 0;
 }
 </style>
